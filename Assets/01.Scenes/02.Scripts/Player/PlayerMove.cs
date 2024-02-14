@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEditor.SceneView;
 
 public class PlayerMove : MonoBehaviour
 {
@@ -19,6 +20,39 @@ public class PlayerMove : MonoBehaviour
     [Header("스태미나 슬라이더 UI")]
     public Slider StaminaSliderUI;
 
+    private CharacterController _characterController;
+
+    // 목표: 스페이스바를 누르면 캐릭터를 점프하고 싶다.
+    // 필요 속성:
+    // - 점프 파워 값
+    public float JumpPower = 10f;
+    public int JumpMaxCount = 2;
+    public int JumpRemainCount;
+    private bool _isJumping = false;
+    // 구현 순서:
+    // 1. 만약에 [Spacebar] 버튼을 누르면..
+    // 2. 플레이어에게 y축에 있어 점프 파워를 적용한다
+
+
+
+    // 목표: 캐릭터에 중력을 적용하고 싶다.
+    // 필요 속성:
+    // - 중력 값
+    private float _gravity = -20;
+    // - 누적할 중력 변수: y축 속도
+    public float _yVelocity = 0f;
+    // 구현 순서:
+    // 1. 중력 가속도가 누적된다.
+    // 2. 플레이어에게 y축에 있어 중력을 적용한다.
+
+
+
+
+    private void Awake()
+    {
+        _characterController = GetComponent<CharacterController>();
+    }
+
     private void Start()
     {
         Stamina = MaxStamina;
@@ -28,8 +62,21 @@ public class PlayerMove : MonoBehaviour
     // 1. 키 입력 받기
     // 2. '캐릭터가 바라보는 방향'을 기준으로 방향구하기
     // 3. 이동하기
+
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Alpha9))
+        {
+            // FPS 카메라 모드로 전환
+            CameraManager.Instance.SetCameraMode(CameraMode.FPS);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha0))
+        {
+            // TPS 카메라 모드로 전환
+            CameraManager.Instance.SetCameraMode(CameraMode.TPS);
+        }
+
+
         // 1. 키 입력 받기
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
@@ -60,7 +107,37 @@ public class PlayerMove : MonoBehaviour
         Stamina = Mathf.Clamp(Stamina, 0, 100);
         StaminaSliderUI.value = Stamina / MaxStamina;  // 0 ~ 1;//
 
-        // 3. 이동하기
-        transform.position += speed * dir * Time.deltaTime;
+        // 땅이면 점프 횟수 초기화
+        if (_characterController.isGrounded)
+        {
+            _isJumping = false;
+            _yVelocity = 0f;
+            JumpRemainCount = JumpMaxCount;
+        }
+
+        // 점프 구현
+        // 1. 만약에 [Spacebar] 버튼을 누르는 순간 && (땅이거나 or 점프 횟수가 남아있다면)
+        if (Input.GetKeyDown(KeyCode.Space) && (_characterController.isGrounded || (_isJumping && JumpRemainCount > 0)))
+        {
+            _isJumping = true;
+
+            JumpRemainCount--;
+
+            // 2. 플레이어에게 y축에 있어 점프 파워를 적용한다.
+            _yVelocity = JumpPower;
+        }
+
+
+        // 3-1. 중력 적용
+        // 1. 중력 가속도가 누적된다.
+        _yVelocity += _gravity * Time.deltaTime;
+
+        // 2. 플레이어에게 y축에 있어 중력을 적용한다.
+
+        dir.y = _yVelocity;
+
+        // 3-2. 이동하기
+        //transform.position += speed * dir * Time.deltaTime;
+        _characterController.Move(dir * speed * Time.deltaTime);
     }
 }

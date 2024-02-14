@@ -2,9 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
+using static UnityEditor.SceneView;
 using Cursor = UnityEngine.Cursor;
 
 // 1인칭 슈팅 (First Person Shooter)
+// 게임상의 캐릭터의 시점을 보는 카메라
 public class FPSCamera : MonoBehaviour
 {
     // ** 카메라 회전 **
@@ -28,6 +30,9 @@ public class FPSCamera : MonoBehaviour
 
 
 
+
+
+
     private void Start()
     {
         // 마우스 커서 없애고, 고정
@@ -40,10 +45,14 @@ public class FPSCamera : MonoBehaviour
     // 2. 마우스 입력 값을 이용해 회전 방향을 구한다.
     // 3. 회전 방향 회전한다.
 
-    private void Update()
+    private void LateUpdate()
     {
-        // 1. 캐릭터의 눈 위치로 카메라를 이동시킨다.
-        transform.position = Target.position;
+        if (CameraManager.Instance.Mode == CameraMode.FPS)
+        {
+            // 1. 캐릭터의 눈 위치로 카메라를 이동시킨다.
+            transform.position = Target.position;
+        }
+
 
 
         // 1. 마우스 입력(drag) 받는다.
@@ -55,7 +64,7 @@ public class FPSCamera : MonoBehaviour
 
         // 2. 마우스 입력 값을 이용해 회전 방향을 구한다.
         Vector3 rotationDir = new Vector3(mouseX, mouseY, 0);
-        //rotationDir.Normalize(); // 정규화
+        // rotationDir.Normalize(); // 정규화
 
         // 3. 회전 방향 회전한다.
         // 새로운 위치 = 이전 위치 + 방향 * 속도 * 시간
@@ -68,8 +77,10 @@ public class FPSCamera : MonoBehaviour
         _my = Mathf.Clamp(_my, -90f, 90f);
         //_mx = Mathf.Clamp(_mx, -270f, 270f);
 
-
-        transform.eulerAngles = new Vector3(-_my, _mx, 0);
+        if (CameraManager.Instance.Mode == CameraMode.FPS)
+        {
+            transform.eulerAngles = new Vector3(-_my, _mx, 0);
+        }
 
         // 오일러 각도의 단점
         // 1. 짐벌락 현상
