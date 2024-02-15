@@ -28,11 +28,6 @@ public class FPSCamera : MonoBehaviour
     // 구현 순서:
     // 1. 캐릭터의 눈 위치로 카메라를 이동시킨다.
 
-
-
-
-
-
     private void Start()
     {
         // 마우스 커서 없애고, 고정

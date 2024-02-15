@@ -17,7 +17,7 @@ public class PlayerMove : MonoBehaviour
     public float StaminaConsumeSpeed = 33f; // 초당 스태미나 소모량
     public float StaminaChargeSpeed = 50;  // 초당 스태미나 충전량
 
-    [Header("스태미나 슬라이더 UI")]
+    [Header("스테미나 슬라이더 UI")]
     public Slider StaminaSliderUI;
 
     private CharacterController _characterController;
