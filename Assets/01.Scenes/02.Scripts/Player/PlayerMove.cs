@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEditor.SceneView;
 
 public class PlayerMove : MonoBehaviour
 {
@@ -17,7 +16,7 @@ public class PlayerMove : MonoBehaviour
     public float StaminaConsumeSpeed = 33f; // 초당 스태미나 소모량
     public float StaminaChargeSpeed = 50;  // 초당 스태미나 충전량
 
-    [Header("스테미나 슬라이더 UI")]
+    [Header("스태미나 슬라이더 UI")]
     public Slider StaminaSliderUI;
 
     private CharacterController _characterController;
@@ -47,6 +46,16 @@ public class PlayerMove : MonoBehaviour
 
 
 
+    // 목표: 벽에 닿아 있는 상태에서 스페이스바를 누르면 벽타기를 하고 싶다.
+    // 필요 속성:
+    // - 벽타기 파워
+    public float ClimbingPower = 7f;
+    // - 벽타기 상태
+    private bool _isClimbing = false;
+    // 구현 순서
+    // 1. 만약 벽에 닿아 있는데
+    // 2. [Spacebar] 버튼을 누르고 있으면
+    // 3. 벽을 타겠다.
 
     private void Awake()
     {
@@ -65,6 +74,22 @@ public class PlayerMove : MonoBehaviour
 
     void Update()
     {
+
+        // 1. 만약 벽에 닿아 있는데 && 스테미너가 > 0
+        if (Sta)
+        if (_characterController.collisionFlags == CollisionFlags.Sides)
+        {
+         
+            // 2. [Spacebar] 버튼을 누르고 있으면
+            if (Input.GetKey(KeyCode.Space))
+            {
+                // 3. 벽을 타겠다.
+                _isClimbing = true;
+
+                _yVelocity = ClimbingPower;
+            }
+        }
+
         if (Input.GetKeyDown(KeyCode.Alpha9))
         {
             // FPS 카메라 모드로 전환
@@ -80,9 +105,20 @@ public class PlayerMove : MonoBehaviour
         // 1. 키 입력 받기
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
-
+        Vector3 dir = Vector3.zero;
         // 2. '캐릭터가 바라보는 방향'을 기준으로 방향구하기
-        Vector3 dir = new Vector3(h, 0, v);             // 로컬 좌표꼐 (나만의 동서남북) 
+        if (_isClimbing)
+        {
+            if(Input.GetKey(KeyCode.Space))
+            {
+
+                transform.position += Vector3.up * Time.deltaTime * ClimbingPower;
+            }
+        }
+        else
+        {
+            dir = new Vector3(h, 0, v);             // 로컬 좌표꼐 (나만의 동서남북) 
+        }
         dir.Normalize();
         // Transforms direction from local space to world space.
         dir = Camera.main.transform.TransformDirection(dir); // 글로벌 좌표계 (세상의 동서남북)
@@ -117,7 +153,7 @@ public class PlayerMove : MonoBehaviour
 
         // 점프 구현
         // 1. 만약에 [Spacebar] 버튼을 누르는 순간 && (땅이거나 or 점프 횟수가 남아있다면)
-        if (Input.GetKeyDown(KeyCode.Space) && (_characterController.isGrounded || (_isJumping && JumpRemainCount > 0)))
+        if (Input.GetKeyDown(KeyCode.Space) && (_characterController.isGrounded || (_isJumping && JumpRemainCount > 0))  && _isClimbing)
         {
             _isJumping = true;
 
