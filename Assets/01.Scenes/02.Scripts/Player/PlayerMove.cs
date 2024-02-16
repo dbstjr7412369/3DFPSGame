@@ -50,12 +50,19 @@ public class PlayerMove : MonoBehaviour
     // 필요 속성:
     // - 벽타기 파워
     public float ClimbingPower = 7f;
+    // - 벽타기 스태미너 소모량 팩터
+    public float ClimbingStaminaCosumeFactor = 1.5f;
     // - 벽타기 상태
     private bool _isClimbing = false;
     // 구현 순서
     // 1. 만약 벽에 닿아 있는데
     // 2. [Spacebar] 버튼을 누르고 있으면
     // 3. 벽을 타겠다.
+
+
+
+
+
 
     private void Awake()
     {
@@ -75,20 +82,20 @@ public class PlayerMove : MonoBehaviour
     void Update()
     {
 
-        // 1. 만약 벽에 닿아 있는데 && 스테미너가 > 0
-        if (Sta)
-        if (_characterController.collisionFlags == CollisionFlags.Sides)
+        // 1. 만약 벽에 닿아 있는데 && 스태미너가 > 0
+        if (Stamina > 0 && _characterController.collisionFlags == CollisionFlags.Sides)
         {
-         
             // 2. [Spacebar] 버튼을 누르고 있으면
             if (Input.GetKey(KeyCode.Space))
             {
                 // 3. 벽을 타겠다.
                 _isClimbing = true;
-
                 _yVelocity = ClimbingPower;
+
             }
         }
+
+
 
         if (Input.GetKeyDown(KeyCode.Alpha9))
         {
@@ -105,31 +112,32 @@ public class PlayerMove : MonoBehaviour
         // 1. 키 입력 받기
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
-        Vector3 dir = Vector3.zero;
-        // 2. '캐릭터가 바라보는 방향'을 기준으로 방향구하기
-        if (_isClimbing)
-        {
-            if(Input.GetKey(KeyCode.Space))
-            {
 
-                transform.position += Vector3.up * Time.deltaTime * ClimbingPower;
-            }
-        }
-        else
-        {
-            dir = new Vector3(h, 0, v);             // 로컬 좌표꼐 (나만의 동서남북) 
-        }
+        // 2. '캐릭터가 바라보는 방향'을 기준으로 방향구하기
+        Vector3 dir = new Vector3(h, 0, v);             // 로컬 좌표꼐 (나만의 동서남북) 
         dir.Normalize();
         // Transforms direction from local space to world space.
         dir = Camera.main.transform.TransformDirection(dir); // 글로벌 좌표계 (세상의 동서남북)
 
         // 실습 과제 1. Shift 누르고 있으면 빨리 뛰기
         float speed = MoveSpeed; // 5
-        if (Input.GetKey(KeyCode.LeftShift)) // 실습 과제 2. 스태미너 구현
+        if (_isClimbing || Input.GetKey(KeyCode.LeftShift)) // 실습 과제 2. 스태미너 구현
         {
             // - Shfit 누른 동안에는 스태미나가 서서히 소모된다. (3초)
-            Stamina -= StaminaConsumeSpeed * Time.deltaTime; // 초당 33씩 소모
-            if (Stamina > 0)
+            float facter = _isClimbing ? ClimbingStaminaCosumeFactor : 1f;
+            Stamina-= StaminaConsumeSpeed * facter * Time.deltaTime;
+            //if (_isClimbing)
+            //{
+            //    Stamina -= StaminaConsumeSpeed * ClimbingStaminaCosumeFactor * Time.deltaTime; // 1.5배 더!
+            //}
+            
+            //else
+            //{
+            //    Stamina -= StaminaConsumeSpeed * Time.deltaTime; // 초당 33씩 소모
+            //}
+
+            // 클라이밍 상태가 아닐때만 스피드 up!
+            if (!_isClimbing && Stamina > 0)
             {
                 speed = RunSpeed;
             }
@@ -143,17 +151,18 @@ public class PlayerMove : MonoBehaviour
         Stamina = Mathf.Clamp(Stamina, 0, 100);
         StaminaSliderUI.value = Stamina / MaxStamina;  // 0 ~ 1;//
 
-        // 땅이면 점프 횟수 초기화
+        // 땅에 닿아을때 
         if (_characterController.isGrounded)
         {
             _isJumping = false;
+            _isClimbing = false;
             _yVelocity = 0f;
             JumpRemainCount = JumpMaxCount;
         }
 
         // 점프 구현
         // 1. 만약에 [Spacebar] 버튼을 누르는 순간 && (땅이거나 or 점프 횟수가 남아있다면)
-        if (Input.GetKeyDown(KeyCode.Space) && (_characterController.isGrounded || (_isJumping && JumpRemainCount > 0))  && _isClimbing)
+        if (Input.GetKeyDown(KeyCode.Space) && (_characterController.isGrounded || (_isJumping && JumpRemainCount > 0)))
         {
             _isJumping = true;
 
