@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerMove : MonoBehaviour
+public class PlayerMove : MonoBehaviour, IHitable
 {
     // 목표: 키보드 방향키(wasd)를 누르면 캐릭터를 바라보는 방향 기준으로 이동시키고 싶다. 
     // 속성:
@@ -59,7 +59,9 @@ public class PlayerMove : MonoBehaviour
     // 2. [Spacebar] 버튼을 누르고 있으면
     // 3. 벽을 타겠다.
 
-
+    public int Health;
+    public int MaxHealth = 100;
+    public Slider HealthSliderUI;
 
 
 
@@ -72,6 +74,7 @@ public class PlayerMove : MonoBehaviour
     private void Start()
     {
         Stamina = MaxStamina;
+        Health = MaxHealth;
     }
 
     // 구현 순서
@@ -81,6 +84,7 @@ public class PlayerMove : MonoBehaviour
 
     void Update()
     {
+        HealthSliderUI.value = (float)Health / (float)MaxHealth;  // 0 ~ 1
 
         // 1. 만약 벽에 닿아 있는데 && 스태미너가 > 0
         if (Stamina > 0 && _characterController.collisionFlags == CollisionFlags.Sides)
@@ -124,17 +128,14 @@ public class PlayerMove : MonoBehaviour
         if (_isClimbing || Input.GetKey(KeyCode.LeftShift)) // 실습 과제 2. 스태미너 구현
         {
             // - Shfit 누른 동안에는 스태미나가 서서히 소모된다. (3초)
-            float facter = _isClimbing ? ClimbingStaminaCosumeFactor : 1f;
-            Stamina-= StaminaConsumeSpeed * facter * Time.deltaTime;
-            //if (_isClimbing)
-            //{
-            //    Stamina -= StaminaConsumeSpeed * ClimbingStaminaCosumeFactor * Time.deltaTime; // 1.5배 더!
-            //}
-            
-            //else
-            //{
-            //    Stamina -= StaminaConsumeSpeed * Time.deltaTime; // 초당 33씩 소모
-            //}
+
+            // 조건(삼항) 연산자
+            // -> 조건식을 사용해서 조건식의 참, 거짓 여부에 따라 다른 결과값을 대입
+            // 조건식 ? 조건식이 참일때의 값 : 조건식이 거짓일때의 값
+
+            float factor = _isClimbing ? ClimbingStaminaCosumeFactor : 1f;
+            Stamina -= StaminaConsumeSpeed * factor * Time.deltaTime;
+
 
             // 클라이밍 상태가 아닐때만 스피드 up!
             if (!_isClimbing && Stamina > 0)
@@ -184,5 +185,14 @@ public class PlayerMove : MonoBehaviour
         // 3-2. 이동하기
         //transform.position += speed * dir * Time.deltaTime;
         _characterController.Move(dir * speed * Time.deltaTime);
+    }
+
+    public void Hit(int damage)
+    {
+        Health -= damage;
+        if (Health <= 0)
+        {
+            Destroy(gameObject);
+        }
     }
 }

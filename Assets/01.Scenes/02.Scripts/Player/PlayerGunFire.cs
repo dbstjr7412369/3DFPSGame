@@ -1,87 +1,110 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+
 public class PlayerGunFire : MonoBehaviour
 {
+    public int Damage = 1;
 
-    private Coroutine _reloadCorutine;
-    // 마우스 왼쪽버튼을 누르면 시선이 바라보는 방향으로 총을 발사하고 싶다
-
-    // 필요속성 
-    // 총알 튀는 이펙트 프리펩
+    // 목표: 마우스 왼쪽 버튼을 누르면 시선이 바라보는 방향으로 총을 발사하고 싶다.
+    // 필요 속성
+    // - 총알 튀는 이펙트 프리팹
     public ParticleSystem HitEffect;
-    public Text BulletCountText;
-    public Text ReloadBulletCountText;
 
-    // 발사 쿨타임
-    public float FireCoolTime = 0.2f;
+    // - 발사 쿨타임
+    public float FireCooltime = 0.2f;
     private float _timer;
-    public int MaxBullet = 30;
-    public int Bullet = 0;
+
+    // - 총알 개수
+    public int BulletRemainCount;
+    public int BulletMaxCount = 30;
+
+    // - 총알 개수 텍스트 UI
+    public Text BulletTextUI;
+
+    private const float RELOAD_TIME = 1.5f; // 재장전 시간
+    private bool _isReloading = false;      // 재장전 중이냐?
+    public GameObject ReloadTextObject;
 
     private void Start()
     {
-        
-        Bullet = MaxBullet;
+        // 총알 개수 초기화
+        BulletRemainCount = BulletMaxCount;
         RefreshUI();
     }
-    void Update()
-    {
-        RefreshUI();
-        PlayerFire();
-    }
+
     private void RefreshUI()
     {
-        // 현재불렛 = 멕스 불렛
-        BulletCountText.text = $"{Bullet:d2}/{MaxBullet}";
-        BulletCountText.color = Color.white;
+        BulletTextUI.text = $"{BulletRemainCount:d2}/{BulletMaxCount}";
     }
-    private void RefreshUI_Reload()
+
+    private IEnumerator Reload_Coroutine()
     {
-        ReloadBulletCountText.text = $"재장전중...";
-        ReloadBulletCountText.color = Color.red;
+        _isReloading = true;
+
+        // R키 누르면 1.5초 후 재장전, (중간에 총 쏘는 행위를 하면 재장전 취소)
+        yield return new WaitForSeconds(RELOAD_TIME);
+        BulletRemainCount = BulletMaxCount;
+        RefreshUI();
+
+        _isReloading = false;
     }
-    //실습 과제 14.총알 최대 개수 30개 적용 및 R키 누르면 초기화(재장전)
-    public void PlayerFire()
+
+    private void Update()
     {
-        //실습 과제 13. 마우스 왼쪽 버튼 누르고 있으면 연사 (쿨타임 적용)
-        _timer += Time.deltaTime;
-        // 1. 만약에 마우스 왼쪽 버튼을 누른 상태 && 쿨타임이 다 지난 상태
-        if (Input.GetMouseButton(0) && _timer >= FireCoolTime && Bullet > 0)
+        if (Input.GetKeyDown(KeyCode.R) && BulletRemainCount < BulletMaxCount)
         {
+            if (!_isReloading)
+            {
+                StartCoroutine(Reload_Coroutine());
+            }
+        }
+
+        ReloadTextObject.SetActive(_isReloading);
+
+
+        _timer += Time.deltaTime;
+
+        // 1. 만약에 마우스 왼쪽 버튼을 누른 상태 && 쿨타임이 다 지난 상태 && 총알 개수 > 0
+        if (Input.GetMouseButton(0) && _timer >= FireCooltime && BulletRemainCount > 0)
+        {
+            // 재장전 취소
+            if (_isReloading)
+            {
+                StopAllCoroutines();
+                _isReloading = false;
+            }
+
+            BulletRemainCount -= 1;
+            RefreshUI();
+
             _timer = 0;
 
-            // 2. 레이(광선)을 생성하고, 위치와 방향을 설정한다
+            // 2. 레이(광선)을 생성하고, 위치와 방향을 설정한다.
             Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
-            // 3.레이를 발사한다
-            // 4. 레이가 부딛힌 대상의 정보를 받아온다
+            // 3. 레이를 발사한다.
+            // 4. 레이가 부딛힌 대상의 정보를 받아온다.
             RaycastHit hitInfo;
-
-            bool IsHit = Physics.Raycast(ray, out hitInfo);
-            if (IsHit)
+            bool isHit = Physics.Raycast(ray, out hitInfo);
+            if (isHit)
             {
-                // 5. 부딛힌 위치에 (총알이 튀는)이펙트를 생성한다
+                //실습 과제 18. 레이저를 몬스터에게 맞출 시 몬스터 체력 닳는 기능 구현
+                IHitable hitObject = hitInfo.collider.GetComponent<IHitable>();
+                if (hitObject != null)  // 때릴 수 있는 친구인가요?
+                {
+                    hitObject.Hit(Damage);
+                }
+
+
+                // 5. 부딛힌 위치에 (총알이 튀는)이펙트를 위치한다.
                 HitEffect.gameObject.transform.position = hitInfo.point;
-                // 6. 이펙트가 쳐다보는 방향을 부딛힌 위치의 법선 백터로 한다
+                // 6. 이펙트가 쳐다보는 방향을 부딛힌 위치의 법선 벡터로 한다.
                 HitEffect.gameObject.transform.forward = hitInfo.normal;
                 HitEffect.Play();
             }
-            Bullet--;
         }
-        if (Input.GetKey(KeyCode.R))
-        {
-            StopCoroutine(_reloadCorutine);
-            Bullet = MaxBullet;
-            StartCoroutine(Reload_Coroutine(1.5f));
-        }
-        //실습 과제 16.R키 누르면 1.5초 후 재장전, (중간에 총 쏘는 행위를 하면 재장전 취소)
-    }
-    private IEnumerator Reload_Coroutine(float reloadTime)
-    {
-        yield return new WaitForSeconds(reloadTime);
-        Debug.Log("재장전중...");
-        yield break;
+
     }
 }
