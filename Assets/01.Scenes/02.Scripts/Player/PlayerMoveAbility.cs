@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerMove : MonoBehaviour, IHitable
+public class PlayerMoveAbility : MonoBehaviour, IHitable
 {
+
     // 목표: 키보드 방향키(wasd)를 누르면 캐릭터를 바라보는 방향 기준으로 이동시키고 싶다. 
     // 속성:
     // - 이동속도
@@ -31,8 +32,6 @@ public class PlayerMove : MonoBehaviour, IHitable
     // 구현 순서:
     // 1. 만약에 [Spacebar] 버튼을 누르면..
     // 2. 플레이어에게 y축에 있어 점프 파워를 적용한다
-
-
 
     // 목표: 캐릭터에 중력을 적용하고 싶다.
     // 필요 속성:
@@ -64,7 +63,8 @@ public class PlayerMove : MonoBehaviour, IHitable
     public Slider HealthSliderUI;
 
 
-
+    public float GetStamina()
+    { return MaxStamina; }
 
     private void Awake()
     {
@@ -81,7 +81,7 @@ public class PlayerMove : MonoBehaviour, IHitable
     // 1. 키 입력 받기
     // 2. '캐릭터가 바라보는 방향'을 기준으로 방향구하기
     // 3. 이동하기
-
+    // 실습 과제 31. T/Y/U 버튼 누르면 아이템 사용 구현
     void Update()
     {
         HealthSliderUI.value = (float)Health / (float)MaxHealth;  // 0 ~ 1

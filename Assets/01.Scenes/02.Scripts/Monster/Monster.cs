@@ -13,6 +13,11 @@ public class Monster : MonoBehaviour, IHitable
     public void Hit(int damage)
     {
         Health -= damage;
+
+        if (Health <= 0)
+        {
+            Destroy(this.gameObject);
+        }
     }
 
     private void Update()
@@ -31,15 +36,4 @@ public class Monster : MonoBehaviour, IHitable
     {
         Health = MaxHealth;
     }
-    private void OnCollisionEnter(Collision other)
-    {
-        if (Health <= 0)
-        {
-            Destroy(this.gameObject);
-        }
-    }
-
-
-
-
 }
