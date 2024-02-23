@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Monster
   - Bomb
+  - Item
   layers:
   - Default
   - TransparentFX
@@ -17,7 +18,7 @@ TagManager:
   - Player
   - Monster
   - Environment
-  - 
+  - Item
   - 
   - 
   - 

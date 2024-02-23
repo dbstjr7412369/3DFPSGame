@@ -60,7 +60,6 @@ public class Drum : MonoBehaviour, IHitable
                 // 3. 데미지 주기
                 hitable.Hit(Damage);
             }
-            
         }
 
         // 실습 과제 23. 드럼통 폭발할 때 주변 드럼통도 같이 폭발되게 구현
@@ -75,6 +74,8 @@ public class Drum : MonoBehaviour, IHitable
                 drum.Explosion();
             }
         }
+
+        ItemObjectFactory.Instance.MakePercent(transform.position);
 
 
         StartCoroutine(Kill_Coroutine());

@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &3643443095816977909
+--- !u!1 &3498654917664302746
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,51 +8,49 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1700762196045740532}
-  - component: {fileID: 9006009062539994489}
-  - component: {fileID: 1003112682440833659}
-  - component: {fileID: 2334562640569401282}
-  - component: {fileID: 1304967287673429007}
-  - component: {fileID: 1869963224092174902}
-  - component: {fileID: 6919523571078617581}
-  - component: {fileID: 4310085702426264772}
-  m_Layer: 9
-  m_Name: Drum
+  - component: {fileID: 4539160278183743261}
+  - component: {fileID: 7684439141288091223}
+  - component: {fileID: 3320916139324341530}
+  - component: {fileID: 8306432084674547937}
+  - component: {fileID: 2447811597652707237}
+  - component: {fileID: 1356704608914675972}
+  m_Layer: 0
+  m_Name: 'BulletItemObject '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1700762196045740532
+--- !u!4 &4539160278183743261
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3643443095816977909}
+  m_GameObject: {fileID: 3498654917664302746}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.03, y: 1.72, z: -0.76}
-  m_LocalScale: {x: 1.6, y: 1.6, z: 1}
+  m_LocalPosition: {x: 5.461, y: 0.72, z: 0.56}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &9006009062539994489
+--- !u!33 &7684439141288091223
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3643443095816977909}
-  m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &1003112682440833659
+  m_GameObject: {fileID: 3498654917664302746}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!23 &3320916139324341530
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3643443095816977909}
+  m_GameObject: {fileID: 3498654917664302746}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -66,7 +64,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: ef632ce567ef74042ac2092b646b99d3, type: 2}
+  - {fileID: 2100000, guid: d64993b993179e249a608548418d5a3a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -88,13 +86,13 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &2334562640569401282
-CapsuleCollider:
+--- !u!65 &8306432084674547937
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3643443095816977909}
+  m_GameObject: {fileID: 3498654917664302746}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -103,37 +101,19 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5000001
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
---- !u!114 &1304967287673429007
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3643443095816977909}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8cd1b4d928f698a4ea15eb545df1aead, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ExplosionPaticlePrefab: {fileID: 1000013462590818, guid: ecdd96beb7f93494880c052dfccf9dc1, type: 3}
-  UpPower: 50
-  Damage: 70
-  ExplosionRadius: 10
---- !u!54 &1869963224092174902
+  serializedVersion: 3
+  m_Size: {x: 2, y: 2, z: 2}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &2447811597652707237
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3643443095816977909}
+  m_GameObject: {fileID: 3498654917664302746}
   serializedVersion: 4
   m_Mass: 1
   m_Drag: 0
@@ -152,38 +132,18 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 36
   m_CollisionDetection: 0
---- !u!114 &6919523571078617581
+--- !u!114 &1356704608914675972
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3643443095816977909}
+  m_GameObject: {fileID: 3498654917664302746}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7c58a9ae5d77b1345935d15c69fe322d, type: 3}
+  m_Script: {fileID: 11500000, guid: 6d27ed7a148d6c142a98035fad21d177, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ItemPrefabs:
-  - {fileID: 1824274902663599080, guid: 3d716eeb321c7cf4398ddf92e9110669, type: 3}
-  - {fileID: 3783169836534046145, guid: 8d02b83bb2869f34e8aacb26a50a9f8f, type: 3}
-  - {fileID: 3498654917664302746, guid: e7d2bab9651165743bbecc03a4e32acb, type: 3}
-  PoolCount: 10
---- !u!208 &4310085702426264772
-NavMeshObstacle:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3643443095816977909}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Shape: 0
-  m_Extents: {x: 0.5, y: 1, z: 0.5}
-  m_MoveThreshold: 0.1
-  m_Carve: 0
-  m_CarveOnlyStationary: 1
-  m_Center: {x: 0, y: 0, z: 0}
-  m_TimeToStationary: 0.5
+  ItemType: 0
