@@ -28,6 +28,11 @@ public class ItemObject : MonoBehaviour
 
     private void Update()
     {
+        if (GameManager.Instance.State != GameState.Go)
+        {
+            return;
+        }
+
         switch (_itemState)
         {
             case ItemState.Idle:

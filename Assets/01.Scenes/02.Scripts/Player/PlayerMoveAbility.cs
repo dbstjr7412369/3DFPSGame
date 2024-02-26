@@ -66,7 +66,6 @@ public class PlayerMoveAbility : MonoBehaviour, IHitable
 
     public Image HitEffectImageUI;
 
-    private float HitTime = 0.2f;
 
     private void Awake()
     {
@@ -88,6 +87,10 @@ public class PlayerMoveAbility : MonoBehaviour, IHitable
     {
         HealthSliderUI.value = (float)Health / (float)MaxHealth;  // 0 ~ 1
 
+        if (GameManager.Instance.State != GameState.Go)
+        {
+            return;
+        }
         // 1. 만약 벽에 닿아 있는데 && 스태미너가 > 0
         if (Stamina > 0 && _characterController.collisionFlags == CollisionFlags.Sides)
         {
@@ -196,7 +199,7 @@ public class PlayerMoveAbility : MonoBehaviour, IHitable
 
     public void Hit(int damage)
     {
-        StartCoroutine(HitEffect_Coroutine(HitTime));
+        StartCoroutine(HitEffect_Coroutine(0.2f));
         CameraManager.Instance.CameraShake.Shake();
 
         Health -= damage;
@@ -204,6 +207,8 @@ public class PlayerMoveAbility : MonoBehaviour, IHitable
         {
             HealthSliderUI.value = 0f;
             gameObject.SetActive(false);
+
+            GameManager.Instance.GameOver();
         }
     }
 

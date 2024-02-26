@@ -12,6 +12,11 @@ public class FPSCamera : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (GameManager.Instance.State != GameState.Go)
+        {
+            return;
+        }
+
         transform.localPosition = Target.position;
 
         Vector2 xy = CameraManager.Instance.XY;
