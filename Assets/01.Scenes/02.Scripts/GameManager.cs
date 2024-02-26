@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,7 +19,7 @@ public class GameManager : MonoBehaviour
     // 게임의 상태는 처음에 "준비" 상태
     public GameState State { get; private set; } = GameState.Ready;
 
-    public Text StateTextUI;
+    public TextMeshProUGUI StateTextUI;
 
     public Color GoStateColor;
 
@@ -89,8 +90,4 @@ public class GameManager : MonoBehaviour
 
         }
     }
-    //실습 과제 42. 플레이어 및 카메라 조작(이동, 공격, 회전 등등)이 게임 상태가 "Go"일때만 가능하게 코드 수정
-
-
-
 }

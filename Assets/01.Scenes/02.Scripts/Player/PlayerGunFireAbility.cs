@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -36,7 +37,7 @@ public class PlayerGunFireAbility : MonoBehaviour
 
 
     // - 총알 개수 텍스트 UI
-    public Text BulletTextUI;
+    public TextMeshProUGUI BulletTextUI;
 
     private bool _isReloading = false;      // 재장전 중이냐?
     public GameObject ReloadTextObject;
