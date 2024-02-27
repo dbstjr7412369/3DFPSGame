@@ -28,17 +28,20 @@ public class PlayerItemUseAbility : MonoBehaviour
             {
                 // todo: 알림창 (아이템이 부족합니다.)
             }
+            ItemManager.Instance.Refresh();
 
-        }
-        else if (Input.GetKeyDown(KeyCode.Y))
-        {
-            // 스태미너 아이템 사용
-            ItemManager.Instance.TryUseItem(ItemType.Stamina);
         }
         else if (Input.GetKeyDown(KeyCode.U))
         {
+            // 스태미너 아이템 사용
+            ItemManager.Instance.TryUseItem(ItemType.Stamina);
+            ItemManager.Instance.Refresh();
+        }
+        else if (Input.GetKeyDown(KeyCode.Y))
+        {
             // 총알 아이템 사용
             ItemManager.Instance.TryUseItem(ItemType.Bullet);
+            ItemManager.Instance.Refresh();
         }
     }
 }

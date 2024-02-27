@@ -107,6 +107,11 @@ public class CameraManager : MonoBehaviour
 
     private void LateUpdate()
     {
+        if(GameManager.Instance.State != GameState.Go)
+        {
+            return;
+        }
+
         if (!Focus)
         {
             return;

@@ -85,7 +85,7 @@ public class ItemObject : MonoBehaviour
 
         // 1. 아이템 매니저(인벤토리)에 추가하고,
         ItemManager.Instance.AddItem(ItemType);
-
+        ItemManager.Instance.Refresh();
         // 2. 사라진다.
         gameObject.SetActive(false);
     }

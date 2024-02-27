@@ -10,6 +10,10 @@ using UnityEngine.UI;
 public class ItemManager : MonoBehaviour
 {
     public UnityEvent OnDataChanged;
+
+    public TextMeshProUGUI textMeshProUGUIsHP;
+    public TextMeshProUGUI textMeshProUGUIsST;
+    public TextMeshProUGUI textMeshProUGUIsBuulet;
     // 관찰자(유튜버) 패턴
     // 구독자가 구독하고 있는 유튜버의 상태가 변화할 때마다
     // 유튜버는 구독자에게 이벤트를 통지하고, 구독자들은 이벤트 알림을 받아 적절하게 
@@ -44,7 +48,14 @@ public class ItemManager : MonoBehaviour
         ;
     }
 
+    public void Refresh()
+    {
+        textMeshProUGUIsHP.text = ItemList[0].Count.ToString();
+        textMeshProUGUIsST.text = ItemList[1].Count.ToString();
+        textMeshProUGUIsBuulet.text = ItemList[2].Count.ToString();
 
+
+    }
     // 1. 아이템 추가(생성)
     public void AddItem(ItemType itemType)
     {
