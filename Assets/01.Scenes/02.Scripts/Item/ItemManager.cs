@@ -44,15 +44,14 @@ public class ItemManager : MonoBehaviour
         ItemList.Add(new Item(ItemType.Health, 3));  // 0: Health
         ItemList.Add(new Item(ItemType.Stamina, 5)); // 1: Stamina
         ItemList.Add(new Item(ItemType.Bullet, 7));  // 2: Bullet
-
-        ;
+        Refresh();
     }
 
     public void Refresh()
     {
-        textMeshProUGUIsHP.text = ItemList[0].Count.ToString();
-        textMeshProUGUIsST.text = ItemList[1].Count.ToString();
-        textMeshProUGUIsBuulet.text = ItemList[2].Count.ToString();
+        textMeshProUGUIsHP.text = "X"+ItemList[0].Count;
+        textMeshProUGUIsST.text = "X" + ItemList[1].Count;
+        textMeshProUGUIsBuulet.text = "X" + ItemList[2].Count;
 
 
     }

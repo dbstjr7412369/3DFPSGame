@@ -10,9 +10,21 @@ public class PlayerRotateAbility : MonoBehaviour
     public float RotationSpeed = 200; // 초당 200도까지 회전 가능한 속도
     // 누적할 x각도
     private float _mx = 0;
-
+    private void Start()
+    {
+        ResetX();
+    }
     void Update()
     {
+        if (GameManager.Instance.State != GameState.Go)
+        {
+            return;
+        }
+
+        if (!CameraManager.Focus)
+        {
+            return;
+        }
         // 1. 마우스 입력(drag) 받는다.
         float mouseX = Input.GetAxis("Mouse X");
 
@@ -22,5 +34,9 @@ public class PlayerRotateAbility : MonoBehaviour
 
         // 3. 누적한 값에 따라 회전한다.
         transform.eulerAngles = new Vector3(0f, _mx, 0);
+    }
+    public void ResetX()
+    {
+        _mx = 0;
     }
 }

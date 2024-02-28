@@ -26,8 +26,11 @@ public class PlayerBombFireAbility : MonoBehaviour
     public List<GameObject> BombPool; // ÆøÅº Ã¢°í
     public int BombPoolSize = 5;
 
+    private Animator _animator;
+
     private void Start()
     {
+        _animator = GetComponent<Animator>();
         // ÆøÅº Ã¢°í »ý¼º
         BombPool = new List<GameObject>();
         for (int i = 0; i < BombPoolSize; i++) // »ý¼ºÇÒ ÆøÅº °³¼ö ¸¸Å­ ¹Ýº¹
@@ -68,6 +71,7 @@ public class PlayerBombFireAbility : MonoBehaviour
             {
                 if (BombPool[i].activeInHierarchy == false) // 2. ¾µ¸¸ÇÑ ÆøÅºÀ» Ã£´Â´Ù.
                 {
+                    _animator.SetTrigger("Throw");
                     bomb = BombPool[i];
                     bomb.SetActive(true);                   // 3. ²¨³½´Ù.
                     break;

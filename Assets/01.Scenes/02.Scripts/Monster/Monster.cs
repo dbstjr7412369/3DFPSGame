@@ -251,7 +251,10 @@ public class Monster : MonoBehaviour, IHitable
         // 실습 과제 35. Attack 상태일 때 N초에 한 번 때리게 딜레이 주기
         _attackTimer += Time.deltaTime;
         if (_attackTimer >= AttackDelay)
-        {
+        { 
+
+            _attackTimer = 0f;
+
             _animator.SetTrigger("Attack");
             // _animator.Play("Attack");
         }

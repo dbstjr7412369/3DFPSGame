@@ -115,6 +115,7 @@ public class PlayerMoveAbility : MonoBehaviour, IHitable
         {
             // FPS 카메라 모드로 전환
             CameraManager.Instance.SetCameraMode(CameraMode.FPS);
+       
         }
         else if (Input.GetKeyDown(KeyCode.Alpha0))
         {
@@ -133,7 +134,6 @@ public class PlayerMoveAbility : MonoBehaviour, IHitable
         dir.Normalize();
         // Transforms direction from local space to world space.
         dir = Camera.main.transform.TransformDirection(dir); // 글로벌 좌표계 (세상의 동서남북)
-
         // 실습 과제 1. Shift 누르고 있으면 빨리 뛰기
         float speed = MoveSpeed; // 5
         if (_isClimbing || Input.GetKey(KeyCode.LeftShift)) // 실습 과제 2. 스태미너 구현
@@ -210,6 +210,9 @@ public class PlayerMoveAbility : MonoBehaviour, IHitable
         CameraManager.Instance.CameraShake.Shake();
 
         Health -= damage;
+
+        _animator.SetLayerWeight(1, 1 - Health / (float)MaxHealth);
+
         if (Health <= 0)
         {
             HealthSliderUI.value = 0f;

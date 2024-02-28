@@ -20,7 +20,7 @@ public class PlayerGunFireAbility : MonoBehaviour
     private const float ZoomOutDuration = 0.2f;
     private float _zoomProgress; // 0 ~ 1
 
-
+    private Animator _animator;
 
     public GameObject CrosshairUI;
     public GameObject CrosshairZoomUI;
@@ -45,8 +45,17 @@ public class PlayerGunFireAbility : MonoBehaviour
     // 무기 이미지 UI
     public Image GunImageUI;
 
+    public List<GameObject> MuzzleFire;
+
     private void Start()
     {
+        foreach (GameObject muzzleEffect in MuzzleFire)
+        {
+            muzzleEffect.SetActive(false);
+        }
+
+        _animator = GetComponentInChildren<Animator>();
+
         _currentGunIndex = 0;
 
         // 총알 개수 초기화
@@ -75,6 +84,7 @@ public class PlayerGunFireAbility : MonoBehaviour
         _isReloading = false;
     }
 
+    //_animator
     // 줌 모드에 따라 카메라 FOV 수정해주는 메서드
     private void RefreshZoomMode()
     {
@@ -195,6 +205,9 @@ public class PlayerGunFireAbility : MonoBehaviour
         // 1. 만약에 마우스 왼쪽 버튼을 누른 상태 && 쿨타임이 다 지난 상태 && 총알 개수 > 0
         if (Input.GetMouseButton(0) && _timer >= CurrentGun.FireCooltime && CurrentGun.BulletRemainCount > 0)
         {
+            //실습 과제 45. 코루틴을 사용해서 총을 쏠때마다 머즐 이펙트 중 랜덤한 하나가 0.1초동안 보이고 꺼지게 하기
+
+            
             // 재장전 취소
             if (_isReloading)
             {
@@ -206,6 +219,11 @@ public class PlayerGunFireAbility : MonoBehaviour
             RefreshUI();
 
             _timer = 0;
+
+            //총 이펙트중 하나를 켜준다
+            //0.1초 후...
+            // 꺼준다.
+            StartCoroutine(MuzzleFireEffectOn_Coroutine());
 
             // 2. 레이(광선)을 생성하고, 위치와 방향을 설정한다.
             Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
@@ -232,7 +250,17 @@ public class PlayerGunFireAbility : MonoBehaviour
         }
 
     }
+    private IEnumerator MuzzleFireEffectOn_Coroutine()
+    {
+        //총 이펙트중 하나를 켜준다
+        int rendumIndex =  UnityEngine.Random.Range(0, MuzzleFire.Count);
+        MuzzleFire[rendumIndex].SetActive(true);
+        //0.1초 후...
+        yield return new WaitForSeconds(0.1f);
+        // 꺼준다.
+        MuzzleFire[rendumIndex].SetActive(false);
 
+    }
     private void RefreshGun()
     {
         foreach (Gun gun in GunInventory)
