@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEditor.Progress;
 
 // 역할: 게임 관리자
 // -> 게임 전체의 상태를 알리고, 시작과 끝을 텍스트로 나타낸다.
@@ -23,6 +24,7 @@ public class GameManager : MonoBehaviour
 
     public Color GoStateColor;
 
+    public PopupOption OptionUI;
   
     private void Awake()
     {
@@ -94,5 +96,6 @@ public class GameManager : MonoBehaviour
     public void OnOptionButtonClicked()
     {
         Debug.Log("옵션 버튼 클릭");
+        OptionUI.Open();
     }
 }
