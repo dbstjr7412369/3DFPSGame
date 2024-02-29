@@ -24,6 +24,9 @@ public class PopupOption : MonoBehaviour
     public void OnOptionButtonContinue()
     {
         Debug.Log("계속하기");
+
+        GameManager.Instance.Continue();
+
         Close();
     }
     public void OnOptionButtonAgain()
@@ -31,7 +34,7 @@ public class PopupOption : MonoBehaviour
         Debug.Log("다시하기");
     }
 
-    public void OnOptionButtonGameOver()
+    public void OnOptionButtonTermination()
     {
         Debug.Log("게임종료");
     }

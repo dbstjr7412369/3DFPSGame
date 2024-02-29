@@ -10,7 +10,8 @@ using static UnityEditor.Progress;
 public enum GameState
 {
     Ready, // 준비
-    Go, // 시작
+    Go,    // 시작
+    Pause, // 일시정지
     Over,  // 오버
 }
 public class GameManager : MonoBehaviour
@@ -92,10 +93,38 @@ public class GameManager : MonoBehaviour
 
         }
     }
+    public void Pause()
+    {
+        State = GameState.Pause;
+        Time.timeScale = 0f;
+    }
+
+    public void Continue()
+    {
+        State = GameState.Go;
+        Time.timeScale = 1f;
+    }
+
+    public void Again()
+    {
+        State = GameState.Go;
+        Time.timeScale = 1f;
+    }
+
+    public void Termination()
+    {
+        State = GameState.Go;
+        Time.timeScale = 1f;
+    }
 
     public void OnOptionButtonClicked()
     {
         Debug.Log("옵션 버튼 클릭");
+
+        State = GameState.Pause;
+        Time.timeScale = 0f;
+        //Time.unscaledDeltaTime; 이펙트 등 다른 움직임도 멈출 경우 
+
         OptionUI.Open();
     }
 }
