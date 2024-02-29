@@ -207,7 +207,7 @@ public class PlayerGunFireAbility : MonoBehaviour
         {
             //실습 과제 45. 코루틴을 사용해서 총을 쏠때마다 머즐 이펙트 중 랜덤한 하나가 0.1초동안 보이고 꺼지게 하기
 
-            
+
             // 재장전 취소
             if (_isReloading)
             {
@@ -237,10 +237,19 @@ public class PlayerGunFireAbility : MonoBehaviour
                 IHitable hitObject = hitInfo.collider.GetComponent<IHitable>();
                 if (hitObject != null)  // 때릴 수 있는 친구인가요?
                 {
-                    hitObject.Hit(CurrentGun.Damage);
+                    DamageInfo damageInfo = new DamageInfo(DamageType.Normal, CurrentGun.Damage);
+                    damageInfo.Position = hitInfo.point;
+                    damageInfo.Normal = hitInfo.normal;
+
+                    if (UnityEngine.Random.Range(0, 2) == 0)
+                    {
+                        Debug.Log("크리티컬!");
+                        damageInfo.DamageType = DamageType.Critical;
+                        damageInfo.Amount *= 2;
+                    }
+
+                    hitObject.Hit(damageInfo);
                 }
-
-
                 // 5. 부딛힌 위치에 (총알이 튀는)이펙트를 위치한다.
                 HitEffect.gameObject.transform.position = hitInfo.point;
                 // 6. 이펙트가 쳐다보는 방향을 부딛힌 위치의 법선 벡터로 한다.
@@ -248,7 +257,6 @@ public class PlayerGunFireAbility : MonoBehaviour
                 HitEffect.Play();
             }
         }
-
     }
     private IEnumerator MuzzleFireEffectOn_Coroutine()
     {

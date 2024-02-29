@@ -63,7 +63,7 @@ public class PlayerMoveAbility : MonoBehaviour, IHitable
     // 3. 벽을 타겠다.
 
     public int Health;
-    public int MaxHealth = 100;
+    public int MaxHealth = 1000000;
     public Slider HealthSliderUI;
 
 
@@ -168,7 +168,8 @@ public class PlayerMoveAbility : MonoBehaviour, IHitable
         {
             if (_yVelocity < -20)
             {
-                Hit(10 * (int)(_yVelocity / -10f));
+                DamageInfo damageInfo = new DamageInfo(DamageType.Normal, 10 * (int)(_yVelocity / -10f));
+                Hit(damageInfo);
             }
 
             _isJumping = false;
@@ -204,14 +205,14 @@ public class PlayerMoveAbility : MonoBehaviour, IHitable
         _animator.SetFloat("Move", unNormalizedDir.magnitude);
     }
 
-    public void Hit(int damage)
+    public void Hit(DamageInfo damageInfo)
     {
         StartCoroutine(HitEffect_Coroutine(0.2f));
         CameraManager.Instance.CameraShake.Shake();
 
-        Health -= damage;
+        Health -= damageInfo.Amount;
 
-        _animator.SetLayerWeight(1, 1 - Health / (float)MaxHealth);
+        RefreshAnimation();
 
         if (Health <= 0)
         {
@@ -220,6 +221,11 @@ public class PlayerMoveAbility : MonoBehaviour, IHitable
 
             GameManager.Instance.GameOver();
         }
+    }
+
+    public void RefreshAnimation()
+    {
+        _animator.SetLayerWeight(1, 1 - Health / (float)MaxHealth);
     }
 
     private IEnumerator HitEffect_Coroutine(float delay)

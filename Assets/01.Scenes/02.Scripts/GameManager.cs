@@ -90,4 +90,9 @@ public class GameManager : MonoBehaviour
 
         }
     }
+
+    public void OnOptionButtonClicked()
+    {
+        Debug.Log("옵션 버튼 클릭");
+    }
 }

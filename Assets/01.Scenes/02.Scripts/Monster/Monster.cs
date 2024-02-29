@@ -26,7 +26,8 @@ public class Monster : MonoBehaviour, IHitable
 
     //private CharacterController _characterController;
     private NavMeshAgent _navMeshAgent;
-    private Animator _animator; 
+    private Animator _animator;
+
 
     private Transform _target;         // 플레이어
     public float FindDistance = 5f;  // 감지 거리
@@ -52,6 +53,8 @@ public class Monster : MonoBehaviour, IHitable
 
     private MonsterState _currentState = MonsterState.Idle;
 
+
+
     private void Start()
     {
         //_characterController = GetComponent<CharacterController>();
@@ -59,6 +62,7 @@ public class Monster : MonoBehaviour, IHitable
         _navMeshAgent.speed = MoveSpeed;
 
         _animator = GetComponentInChildren<Animator>();
+
 
         _target = GameObject.FindGameObjectWithTag("Player").transform;
 
@@ -75,12 +79,12 @@ public class Monster : MonoBehaviour, IHitable
 
     private void Update()
     {
+        HealthSliderUI.value = (float)Health / (float)MaxHealth;  // 0 ~ 1
+
         if (GameManager.Instance.State != GameState.Go)
         {
             return;
         }
-
-        HealthSliderUI.value = (float)Health / (float)MaxHealth;  // 0 ~ 1
 
         // 상태 패턴: 상태에 따라 행동을 다르게 하는 패턴 
         // 1. 몬스터가 가질 수 있는 행동에 따라 상태를 나눈다.
@@ -111,6 +115,7 @@ public class Monster : MonoBehaviour, IHitable
             case MonsterState.Damaged:
                 Damaged();
                 break;
+
             case MonsterState.Die:
                 Die();
                 break;
@@ -124,7 +129,7 @@ public class Monster : MonoBehaviour, IHitable
         if (PatrolTarget != null && _idleTimer >= IDLE_DURATION)
         {
             _idleTimer = 0f;
-            _animator.SetTrigger("IdieToPatrol");
+            _animator.SetTrigger("IdleToPatrol");
             Debug.Log("상태 전환: Idle -> Patrol");
             _currentState = MonsterState.Patrol;
         }
@@ -133,8 +138,8 @@ public class Monster : MonoBehaviour, IHitable
         // todo: 몬스터의 Idle 애니메이션 재생
         if (Vector3.Distance(_target.position, transform.position) <= FindDistance)
         {
-            _animator.SetTrigger("IdleToTrace");
             Debug.Log("상태 전환: Idle -> Trace");
+            _animator.SetTrigger("IdleToTrace");
             _currentState = MonsterState.Trace;
         }
     }
@@ -150,7 +155,7 @@ public class Monster : MonoBehaviour, IHitable
         dir.Normalize();
         // 2. 이동한다.
         // _characterController.Move(dir * MoveSpeed * Time.deltaTime);
-        _animator.SetTrigger("IdleToTrace");
+
         // 내비게이션이 접근하는 최소 거리를 공격 가능 거리로 설정
         _navMeshAgent.stoppingDistance = AttackDistance;
 
@@ -162,16 +167,15 @@ public class Monster : MonoBehaviour, IHitable
 
         if (Vector3.Distance(transform.position, StartPosition) >= MoveDistance)
         {
-            _animator.SetTrigger("TraceToComeback");
-
             Debug.Log("상태 전환: Trace -> Comeback");
+            _animator.SetTrigger("TraceToComeback");
             _currentState = MonsterState.Comeback;
         }
 
         if (Vector3.Distance(_target.position, transform.position) <= AttackDistance)
         {
-            _animator.SetTrigger("TraceToAttackDelay");
             Debug.Log("상태 전환: Trace -> Attack");
+            _animator.SetTrigger("TraceToAttack");
             _currentState = MonsterState.Attack;
         }
     }
@@ -183,16 +187,15 @@ public class Monster : MonoBehaviour, IHitable
 
         if (!_navMeshAgent.pathPending && _navMeshAgent.remainingDistance <= TOLERANCE)
         {
-            _animator.SetTrigger("PatrolToComeback");
             Debug.Log("상태 전환: Patrol -> Comeback");
+            _animator.SetTrigger("PatrolToComeback");
             _currentState = MonsterState.Comeback;
         }
 
         if (Vector3.Distance(_target.position, transform.position) <= FindDistance)
         {
-
-            _animator.SetTrigger("PatrolToTrace");
             Debug.Log("상태 전환: Patrol -> Trace");
+            _animator.SetTrigger("PatrolToTrace");
             _currentState = MonsterState.Trace;
         }
 
@@ -221,16 +224,15 @@ public class Monster : MonoBehaviour, IHitable
 
         if (!_navMeshAgent.pathPending && _navMeshAgent.remainingDistance <= TOLERANCE)
         {
-            _animator.SetTrigger("ComebackToIdie");
-
             Debug.Log("상태 전환: Comeback -> idle");
+            _animator.SetTrigger("ComebackToIdle");
             _currentState = MonsterState.Idle;
         }
 
         if (Vector3.Distance(StartPosition, transform.position) <= TOLERANCE)
         {
-            _animator.SetTrigger("ComebackToIdie");
             Debug.Log("상태 전환: Comeback -> idle");
+            _animator.SetTrigger("ComebackToIdle");
             _currentState = MonsterState.Idle;
         }
 
@@ -251,27 +253,24 @@ public class Monster : MonoBehaviour, IHitable
         // 실습 과제 35. Attack 상태일 때 N초에 한 번 때리게 딜레이 주기
         _attackTimer += Time.deltaTime;
         if (_attackTimer >= AttackDelay)
-        { 
-
-            _attackTimer = 0f;
-
+        {
             _animator.SetTrigger("Attack");
-            // _animator.Play("Attack");
+            _animator.Play("Attack");
         }
     }
 
     public void PlayerAttack()
     {
-        // 거리재기코드넣을 것
         IHitable playerHitable = _target.GetComponent<IHitable>();
         if (playerHitable != null)
         {
             Debug.Log("때렸다!");
-            playerHitable.Hit(Damage);
+
+            DamageInfo damageInfo = new DamageInfo(DamageType.Normal, Damage);
+            playerHitable.Hit(damageInfo);
             _attackTimer = 0f;
         }
     }
-
 
     private void Damaged()
     {
@@ -300,20 +299,28 @@ public class Monster : MonoBehaviour, IHitable
         {
             _knockbackProgress = 0f;
 
-            _animator.SetTrigger("DamagedToTrace");
             Debug.Log("상태 전환: Damaged -> Trace");
+            _animator.SetTrigger("DamagedToTrace");
             _currentState = MonsterState.Trace;
         }
     }
 
-    public void Hit(int damage)
+    public void Hit(DamageInfo damage)
     {
         if (_currentState == MonsterState.Die)
         {
             return;
         }
 
-        Health -= damage;
+        // Todo.데미지 타입이 크리티컬이면  피흘리기
+        if (damage.DamageType == DamageType.Critical)
+        {
+            BloodFactory.Instance.Make(damage.Position, damage.Normal);
+        }
+
+
+
+        Health -= damage.Amount;
         if (Health <= 0)
         {
             Debug.Log("상태 전환: Any -> Die");
@@ -333,13 +340,14 @@ public class Monster : MonoBehaviour, IHitable
     private Coroutine _dieCoroutine;
     private void Die()
     {
+        // 매 프레임마다 해야 할 행동을 추가
+
         if (_dieCoroutine == null)
         {
             _dieCoroutine = StartCoroutine(Die_Coroutine());
         }
-        
-
     }
+
     private IEnumerator Die_Coroutine()
     {
         _navMeshAgent.isStopped = true;
@@ -349,10 +357,19 @@ public class Monster : MonoBehaviour, IHitable
 
         yield return new WaitForSeconds(2f);
 
-        // 죽을때 아이템 생성
-        ItemObjectFactory.Instance.MakePercent(transform.position);
-
         Destroy(gameObject);
 
+
+        // 죽을때 아이템 생성
+        ItemObjectFactory.Instance.MakePercent(transform.position);
     }
+
+
+
+
+
+
+
+
+
 }
