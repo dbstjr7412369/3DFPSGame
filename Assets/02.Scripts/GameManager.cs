@@ -1,18 +1,16 @@
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEditor.Progress;
 
 // 역할: 게임 관리자
 // -> 게임 전체의 상태를 알리고, 시작과 끝을 텍스트로 나타낸다.
 public enum GameState
 {
-    Ready, // 준비
-    Go,    // 시작
-    Pause, // 일시정지
-    Over,  // 오버
+    Ready,  // 준비
+    Go,     // 시작
+    Pause,  // 일시정지
+    Over,   // 오버
 }
 public class GameManager : MonoBehaviour
 {
@@ -25,8 +23,8 @@ public class GameManager : MonoBehaviour
 
     public Color GoStateColor;
 
-    public PopupOption OptionUI;
-  
+    public UI_OptionPopup OptionUI;
+    public UI_GameoverPopup GameOverUI;
     private void Awake()
     {
         Instance = this;
@@ -34,6 +32,8 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        Time.timeScale = 1f;
+
         StartCoroutine(Start_Coroutine());
     }
 
@@ -63,55 +63,13 @@ public class GameManager : MonoBehaviour
         StateTextUI.gameObject.SetActive(true);
         Refresh();
     }
-    public void Refresh()
-    {
-        switch (State)
-        {
-            case GameState.Ready:
-            {
-                StateTextUI.text = "Ready...";
-                StateTextUI.color = new Color(0 / 255f, 16 / 255f, 195 / 255f, 255 / 255f);
 
-                break;
-            }
-
-            case GameState.Go:
-            {
-                StateTextUI.text = "Go!";
-                StateTextUI.color = GoStateColor;
-
-                break;
-            }
-
-            case GameState.Over:
-            {
-                StateTextUI.text = "Game Over";
-                StateTextUI.color = new Color32(195, 0, 33, 255);
-
-                break;
-            }
-
-        }
-    }
     public void Pause()
     {
         State = GameState.Pause;
         Time.timeScale = 0f;
     }
-
     public void Continue()
-    {
-        State = GameState.Go;
-        Time.timeScale = 1f;
-    }
-
-    public void Again()
-    {
-        State = GameState.Go;
-        Time.timeScale = 1f;
-    }
-
-    public void Termination()
     {
         State = GameState.Go;
         Time.timeScale = 1f;
@@ -119,12 +77,45 @@ public class GameManager : MonoBehaviour
 
     public void OnOptionButtonClicked()
     {
+        if (State == GameState.Over)
+        {
+            return;
+        }
+
         Debug.Log("옵션 버튼 클릭");
 
-        State = GameState.Pause;
-        Time.timeScale = 0f;
-        //Time.unscaledDeltaTime; 이펙트 등 다른 움직임도 멈출 경우 
+        Pause();
 
         OptionUI.Open();
+    }
+
+
+
+    public void Refresh()
+    {
+        switch (State)
+        {
+            case GameState.Ready:
+            {
+                StateTextUI.text = "Ready...";
+                StateTextUI.color = new Color32(0, 253, 181, 255);
+                break;
+            }
+
+            case GameState.Go:
+            {
+                StateTextUI.text = "Go!";
+                StateTextUI.color = GoStateColor;
+                break;
+            }
+
+            case GameState.Over:
+            {
+                StateTextUI.text = "Game Over";
+                StateTextUI.color = Color.red;
+                break;
+            }
+
+        }
     }
 }
